@@ -14,7 +14,9 @@ TEST_CASE("Fuzzing-2") {
     for (uint32_t i = 0; i < kShotsCount; ++i) {
         try {
             auto req = fuzzer.Next();
-            // std::cerr << req << std::endl;  // uncomment to debug, random is deterministic
+#ifdef SCHEME_FUZZING_2_PRINT_REQUESTS
+            std::cerr << "[ " << i << " ] " << req << std::endl;
+#endif
             interpreter.Run(req);
         } catch (const SyntaxError&) {
         } catch (const RuntimeError&) {
