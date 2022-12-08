@@ -1,14 +1,19 @@
 #include "list_functions.h"
 
-std::shared_ptr<Object> ConsFunction::CallInstance(std::shared_ptr<Object> head) {
-    CheckArgsFunc(As<Cell>(head), false);
-
+std::shared_ptr<Object> ConsFunction::CallInstance(std::shared_ptr<Object> head,
+                                                   std::shared_ptr<Scope> scope) {
     std::shared_ptr<Object> last_head = nullptr;
     std::shared_ptr<Object> last_tail = head;
 
     while (last_tail != nullptr && As<Cell>(last_tail)->GetSecond() != nullptr) {
         last_head = last_tail;
         last_tail = As<Cell>(last_tail)->GetSecond();
+
+        if (Is<Cell>(last_tail) && Is<Cell>(As<Cell>(last_tail)->GetFirst()) &&
+            Is<LambdaFunction>(As<Cell>(As<Cell>(last_tail)->GetFirst())->GetFirst())) {
+            As<LambdaFunction>(As<Cell>(As<Cell>(last_tail)->GetFirst())->GetFirst())
+                ->SetScope(scope);
+        }
     }
 
     As<Cell>(last_head)->SetSecond(As<Cell>(last_tail)->GetFirst());
@@ -16,8 +21,9 @@ std::shared_ptr<Object> ConsFunction::CallInstance(std::shared_ptr<Object> head)
     return As<Cell>(head)->GetSecond();
 }
 
-std::shared_ptr<Object> CarFunction::CallInstance(std::shared_ptr<Object> head) {
-    CheckArgsFunc(As<Cell>(head), false);
+std::shared_ptr<Object> CarFunction::CallInstance(std::shared_ptr<Object> head,
+                                                  std::shared_ptr<Scope> scope) {
+    CheckArgsFunc(As<Cell>(head), scope, false);
 
     auto cur_args = As<Cell>(head)->GetSecond();
 
@@ -28,34 +34,37 @@ std::shared_ptr<Object> CarFunction::CallInstance(std::shared_ptr<Object> head) 
     return As<Cell>(As<Cell>(cur_args)->GetFirst())->GetFirst();
 }
 
-std::shared_ptr<Object> CdrFunction::CallInstance(std::shared_ptr<Object> head) {
-    CheckArgsFunc(As<Cell>(head), false);
+std::shared_ptr<Object> CdrFunction::CallInstance(std::shared_ptr<Object> head,
+                                                  std::shared_ptr<Scope> scope) {
+    CheckArgsFunc(As<Cell>(head), scope, false);
 
     auto cur_args = As<Cell>(head)->GetSecond();
 
     if (As<Cell>(cur_args)->GetFirst() == nullptr) {
-        throw RuntimeError("car function expect at least one arg");
+        throw RuntimeError("cdr function expect at least one arg");
     }
 
     return As<Cell>(As<Cell>(cur_args)->GetFirst())->GetSecond();
 }
 
-std::shared_ptr<Object> ListFuntion::CallInstance(std::shared_ptr<Object> head) {
+std::shared_ptr<Object> ListFuntion::CallInstance(std::shared_ptr<Object> head,
+                                                  std::shared_ptr<Scope> scope) {
     if (As<Cell>(head)->GetSecond() == nullptr) {
         return nullptr;
     }
 
-    CheckArgsFunc(As<Cell>(head), false);
+    CheckArgsFunc(As<Cell>(head), scope, false);
 
     return As<Cell>(head)->GetSecond();
 }
 
-std::shared_ptr<Object> ListRefFuntion::CallInstance(std::shared_ptr<Object> head) {
+std::shared_ptr<Object> ListRefFuntion::CallInstance(std::shared_ptr<Object> head,
+                                                     std::shared_ptr<Scope> scope) {
     if (As<Cell>(head)->GetSecond() == nullptr) {
         throw RuntimeError("empty equation");
     }
 
-    CheckArgsFunc(As<Cell>(head), false);
+    CheckArgsFunc(As<Cell>(head), scope, false);
     auto cur_args = As<Cell>(head)->GetSecond();
 
     if (As<Cell>(cur_args)->GetSecond() == nullptr) {
@@ -81,12 +90,13 @@ std::shared_ptr<Object> ListRefFuntion::CallInstance(std::shared_ptr<Object> hea
     throw RuntimeError("idx should be less than len of sequence");
 }
 
-std::shared_ptr<Object> ListTailFunction::CallInstance(std::shared_ptr<Object> head) {
+std::shared_ptr<Object> ListTailFunction::CallInstance(std::shared_ptr<Object> head,
+                                                       std::shared_ptr<Scope> scope) {
     if (As<Cell>(head)->GetSecond() == nullptr) {
         throw RuntimeError("empty equation");
     }
 
-    CheckArgsFunc(As<Cell>(head), false);
+    CheckArgsFunc(As<Cell>(head), scope, false);
     auto cur_args = As<Cell>(head)->GetSecond();
 
     if (As<Cell>(cur_args)->GetSecond() == nullptr) {

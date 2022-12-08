@@ -2,7 +2,8 @@
 
 std::shared_ptr<Object> AsignValueInEqualityFunc(std::shared_ptr<Object> ptr,
                                                  std::shared_ptr<IFunctionEquality> func_obj,
-                                                 bool must_be_number, bool return_first_false) {
+                                                 std::shared_ptr<Scope> scope, bool must_be_number,
+                                                 bool return_first_false) {
     auto cur = As<Cell>(ptr);
 
     if (cur->GetSecond() == nullptr) {
@@ -14,7 +15,7 @@ std::shared_ptr<Object> AsignValueInEqualityFunc(std::shared_ptr<Object> ptr,
     } else {
         auto cur_args = As<Cell>(cur->GetSecond());
         auto right_arg_ptr = As<Cell>(cur_args->GetSecond());
-        CheckArgsFunc(cur, must_be_number);
+        CheckArgsFunc(cur, scope, must_be_number);
 
         if (cur_args->GetSecond() == nullptr) {
             throw RuntimeError("Not enough args for Arithmetic Func");
@@ -34,7 +35,7 @@ std::shared_ptr<Object> AsignValueInEqualityFunc(std::shared_ptr<Object> ptr,
             } else {
                 if (As<Boolean>(comp_res)->GetValue()) {  // <=> two numbers
                     cur->SetSecond(right_arg_ptr);
-                    return func_obj->CallInstance(cur);
+                    return func_obj->CallInstance(cur, scope);
                 } else {
                     return comp_res;
                 }
@@ -76,16 +77,17 @@ std::shared_ptr<Object> AsignValueInEqualityFunc(std::shared_ptr<Object> ptr,
                     return right_arg_ptr->GetFirst();
                 } else {  // need to continue
                     cur->SetSecond(right_arg_ptr);
-                    return func_obj->CallInstance(cur);
+                    return func_obj->CallInstance(cur, scope);
                 }
             }
         }
     }
 }
 
-std::shared_ptr<Object> EqualFunc::CallInstance(std::shared_ptr<Object> ptr) {
+std::shared_ptr<Object> EqualFunc::CallInstance(std::shared_ptr<Object> ptr,
+                                                std::shared_ptr<Scope> scope) {
 
-    return AsignValueInEqualityFunc(ptr, std::make_shared<EqualFunc>());
+    return AsignValueInEqualityFunc(ptr, std::make_shared<EqualFunc>(), scope);
 }
 
 std::shared_ptr<Object> EqualFunc::CheckEquality(std::shared_ptr<Object> ptr1,
@@ -93,8 +95,9 @@ std::shared_ptr<Object> EqualFunc::CheckEquality(std::shared_ptr<Object> ptr1,
     return std::make_shared<Boolean>(*As<Number>(ptr1) == *As<Number>(ptr2));
 }
 
-std::shared_ptr<Object> GreaterFunction::CallInstance(std::shared_ptr<Object> ptr) {
-    return AsignValueInEqualityFunc(ptr, std::make_shared<GreaterFunction>());
+std::shared_ptr<Object> GreaterFunction::CallInstance(std::shared_ptr<Object> ptr,
+                                                      std::shared_ptr<Scope> scope) {
+    return AsignValueInEqualityFunc(ptr, std::make_shared<GreaterFunction>(), scope);
 }
 
 std::shared_ptr<Object> GreaterFunction::CheckEquality(std::shared_ptr<Object> ptr1,
@@ -102,8 +105,9 @@ std::shared_ptr<Object> GreaterFunction::CheckEquality(std::shared_ptr<Object> p
     return std::make_shared<Boolean>(*As<Number>(ptr1) > *As<Number>(ptr2));
 }
 
-std::shared_ptr<Object> GreaterOrEqualFunction::CallInstance(std::shared_ptr<Object> ptr) {
-    return AsignValueInEqualityFunc(ptr, std::make_shared<GreaterOrEqualFunction>());
+std::shared_ptr<Object> GreaterOrEqualFunction::CallInstance(std::shared_ptr<Object> ptr,
+                                                             std::shared_ptr<Scope> scope) {
+    return AsignValueInEqualityFunc(ptr, std::make_shared<GreaterOrEqualFunction>(), scope);
 }
 
 std::shared_ptr<Object> GreaterOrEqualFunction::CheckEquality(std::shared_ptr<Object> ptr1,
@@ -111,8 +115,9 @@ std::shared_ptr<Object> GreaterOrEqualFunction::CheckEquality(std::shared_ptr<Ob
     return std::make_shared<Boolean>(*As<Number>(ptr1) >= *As<Number>(ptr2));
 }
 
-std::shared_ptr<Object> LowerFunction::CallInstance(std::shared_ptr<Object> ptr) {
-    return AsignValueInEqualityFunc(ptr, std::make_shared<LowerFunction>());
+std::shared_ptr<Object> LowerFunction::CallInstance(std::shared_ptr<Object> ptr,
+                                                    std::shared_ptr<Scope> scope) {
+    return AsignValueInEqualityFunc(ptr, std::make_shared<LowerFunction>(), scope);
 }
 
 std::shared_ptr<Object> LowerFunction::CheckEquality(std::shared_ptr<Object> ptr1,
@@ -120,8 +125,9 @@ std::shared_ptr<Object> LowerFunction::CheckEquality(std::shared_ptr<Object> ptr
     return std::make_shared<Boolean>(*As<Number>(ptr1) < *As<Number>(ptr2));
 }
 
-std::shared_ptr<Object> LowerOrEqualFunction::CallInstance(std::shared_ptr<Object> ptr) {
-    return AsignValueInEqualityFunc(ptr, std::make_shared<LowerOrEqualFunction>());
+std::shared_ptr<Object> LowerOrEqualFunction::CallInstance(std::shared_ptr<Object> ptr,
+                                                           std::shared_ptr<Scope> scope) {
+    return AsignValueInEqualityFunc(ptr, std::make_shared<LowerOrEqualFunction>(), scope);
 }
 
 std::shared_ptr<Object> LowerOrEqualFunction::CheckEquality(std::shared_ptr<Object> ptr1,
@@ -129,8 +135,9 @@ std::shared_ptr<Object> LowerOrEqualFunction::CheckEquality(std::shared_ptr<Obje
     return std::make_shared<Boolean>(*As<Number>(ptr1) <= *As<Number>(ptr2));
 }
 
-std::shared_ptr<Object> AndFunction::CallInstance(std::shared_ptr<Object> ptr) {
-    return AsignValueInEqualityFunc(ptr, std::make_shared<AndFunction>(), false);
+std::shared_ptr<Object> AndFunction::CallInstance(std::shared_ptr<Object> ptr,
+                                                  std::shared_ptr<Scope> scope) {
+    return AsignValueInEqualityFunc(ptr, std::make_shared<AndFunction>(), scope, false);
 }
 
 std::shared_ptr<Object> AndFunction::CheckEquality(std::shared_ptr<Object> ptr1,
@@ -147,8 +154,9 @@ std::shared_ptr<Object> AndFunction::CheckEquality(std::shared_ptr<Object> ptr1,
     return ptr2;
 }
 
-std::shared_ptr<Object> OrFunction::CallInstance(std::shared_ptr<Object> ptr) {
-    return AsignValueInEqualityFunc(ptr, std::make_shared<OrFunction>(), false, false);
+std::shared_ptr<Object> OrFunction::CallInstance(std::shared_ptr<Object> ptr,
+                                                 std::shared_ptr<Scope> scope) {
+    return AsignValueInEqualityFunc(ptr, std::make_shared<OrFunction>(), scope, false, false);
 }
 
 std::shared_ptr<Object> OrFunction::CheckEquality(std::shared_ptr<Object> ptr1,

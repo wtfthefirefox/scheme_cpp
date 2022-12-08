@@ -5,9 +5,9 @@
 class IsNumberFunction : public IFunctionIs {
 public:
     IsNumberFunction(){};
-    bool IsInstanceOf(std::shared_ptr<Object> ptr) override;
+    bool IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope>) override;
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>) override {
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>, std::shared_ptr<Scope>) override {
         return nullptr;
     };
 };
@@ -15,9 +15,9 @@ public:
 class IsBooleanFunction : public IFunctionIs {
 public:
     IsBooleanFunction(){};
-    bool IsInstanceOf(std::shared_ptr<Object> ptr) override;
+    bool IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope>) override;
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>) override {
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>, std::shared_ptr<Scope>) override {
         return nullptr;
     };
 };
@@ -25,9 +25,9 @@ public:
 class NotFunction : public IFunctionIs {  // revert boolean otherwise false
 public:
     NotFunction(){};
-    bool IsInstanceOf(std::shared_ptr<Object> ptr) override;
+    bool IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope>) override;
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>) override {
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>, std::shared_ptr<Scope>) override {
         return nullptr;
     };
 };
@@ -35,9 +35,9 @@ public:
 class IsPairFunction : public IFunctionIs {  // revert boolean otherwise false
 public:
     IsPairFunction(){};
-    bool IsInstanceOf(std::shared_ptr<Object> ptr) override;
+    bool IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope>) override;
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>) override {
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>, std::shared_ptr<Scope>) override {
         return nullptr;
     };
 };
@@ -45,9 +45,9 @@ public:
 class IsNullFunction : public IFunctionIs {  // revert boolean otherwise false
 public:
     IsNullFunction(){};
-    bool IsInstanceOf(std::shared_ptr<Object> ptr) override;
+    bool IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope>) override;
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>) override {
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>, std::shared_ptr<Scope>) override {
         return nullptr;
     };
 };
@@ -55,9 +55,19 @@ public:
 class IsListFunction : public IFunctionIs {  // revert boolean otherwise false
 public:
     IsListFunction(){};
-    bool IsInstanceOf(std::shared_ptr<Object> ptr) override;
+    bool IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope>) override;
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>) override {
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>, std::shared_ptr<Scope>) override {
+        return nullptr;
+    };
+};
+
+class IsSymbolFunction : public IFunctionIs {  // revert boolean otherwise false
+public:
+    IsSymbolFunction(){};
+    bool IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope>) override;
+
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object>, std::shared_ptr<Scope>) override {
         return nullptr;
     };
 };

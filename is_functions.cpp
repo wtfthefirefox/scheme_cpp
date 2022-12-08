@@ -1,6 +1,7 @@
 #include "is_functions.h"
 
-void CheckIsFunctionArgs(std::shared_ptr<Object> ptr, bool can_be_null = false) {
+void CheckIsFunctionArgs(std::shared_ptr<Object> ptr, std::shared_ptr<Scope> scope,
+                         bool can_be_null = false) {
     if (!can_be_null && ptr == nullptr) {
         throw RuntimeError("Is functions requires one argument");
     }
@@ -16,13 +17,13 @@ void CheckIsFunctionArgs(std::shared_ptr<Object> ptr, bool can_be_null = false) 
 
         if (Is<Cell>(cur_args->GetFirst()) &&
             Is<IFunction>(As<Cell>(cur_args->GetFirst())->GetFirst())) {  // first arg as function
-            RUN_FUNC_AS_ARG(CheckIsFunctionArgs, cur_args, can_be_null)
+            RUN_FUNC_AS_ARG(CheckIsFunctionArgs, cur_args, scope, can_be_null)
         }
     }
 }
 
-bool IsNumberFunction::IsInstanceOf(std::shared_ptr<Object> ptr) {
-    CheckIsFunctionArgs(ptr);
+bool IsNumberFunction::IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope> scope) {
+    CheckIsFunctionArgs(ptr, scope);
 
     if (Is<Number>(ptr)) {
         return true;
@@ -39,8 +40,8 @@ bool IsNumberFunction::IsInstanceOf(std::shared_ptr<Object> ptr) {
     return false;
 }
 
-bool IsBooleanFunction::IsInstanceOf(std::shared_ptr<Object> ptr) {
-    CheckIsFunctionArgs(ptr);
+bool IsBooleanFunction::IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope> scope) {
+    CheckIsFunctionArgs(ptr, scope);
 
     if (Is<Boolean>(ptr)) {
         return true;
@@ -57,8 +58,8 @@ bool IsBooleanFunction::IsInstanceOf(std::shared_ptr<Object> ptr) {
     return false;
 }
 
-bool NotFunction::IsInstanceOf(std::shared_ptr<Object> ptr) {
-    CheckIsFunctionArgs(ptr);
+bool NotFunction::IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope> scope) {
+    CheckIsFunctionArgs(ptr, scope);
 
     if (Is<Boolean>(ptr)) {
         if (As<Boolean>(ptr)->GetValue()) {
@@ -80,8 +81,8 @@ bool NotFunction::IsInstanceOf(std::shared_ptr<Object> ptr) {
     return false;
 }
 
-bool IsPairFunction::IsInstanceOf(std::shared_ptr<Object> ptr) {
-    CheckIsFunctionArgs(ptr, true);
+bool IsPairFunction::IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope> scope) {
+    CheckIsFunctionArgs(ptr, scope, true);
 
     if (As<Cell>(ptr)->GetFirst() == nullptr || Is<Symbol>(As<Cell>(ptr)->GetFirst()) ||
         Is<Number>(As<Cell>(ptr)->GetFirst())) {
@@ -91,8 +92,8 @@ bool IsPairFunction::IsInstanceOf(std::shared_ptr<Object> ptr) {
     return true;
 }
 
-bool IsNullFunction::IsInstanceOf(std::shared_ptr<Object> ptr) {
-    CheckIsFunctionArgs(ptr, true);
+bool IsNullFunction::IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope> scope) {
+    CheckIsFunctionArgs(ptr, scope, true);
 
     if (As<Cell>(ptr)->GetFirst() == nullptr) {
         return true;
@@ -120,12 +121,22 @@ bool CheckArgsInList(std::shared_ptr<Object> ptr) {
     }
 }
 
-bool IsListFunction::IsInstanceOf(std::shared_ptr<Object> ptr) {
-    CheckIsFunctionArgs(ptr, true);
+bool IsListFunction::IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope> scope) {
+    CheckIsFunctionArgs(ptr, scope, true);
 
     if (Is<Symbol>(As<Cell>(ptr)->GetFirst()) || Is<Number>(As<Cell>(ptr)->GetFirst())) {
         return false;
     }
 
     return CheckArgsInList(ptr);
+}
+
+bool IsSymbolFunction::IsInstanceOf(std::shared_ptr<Object> ptr, std::shared_ptr<Scope> scope) {
+    CheckIsFunctionArgs(ptr, scope, true);
+
+    if (Is<Symbol>(As<Cell>(ptr)->GetFirst())) {
+        return true;
+    }
+
+    return false;
 }

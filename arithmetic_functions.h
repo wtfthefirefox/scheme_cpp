@@ -20,61 +20,75 @@ class SumFunction : public IFunctionArithmetic {
 public:
     SumFunction(){};
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr) override;
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr,
+                                         std::shared_ptr<Scope>) override;
 
     int64_t EvalArgs(std::shared_ptr<Number> ptr1, std::shared_ptr<Number> ptr2) override;
+    std::string ToString() override;
 };
 
 class MinusFunction : public IFunctionArithmetic {
 public:
     MinusFunction(){};
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr) override;
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr,
+                                         std::shared_ptr<Scope>) override;
 
     int64_t EvalArgs(std::shared_ptr<Number> ptr1, std::shared_ptr<Number> ptr2) override;
+    std::string ToString() override;
 };
 
 class MultiplyFunction : public IFunctionArithmetic {
 public:
     MultiplyFunction(){};
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr) override;
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr,
+                                         std::shared_ptr<Scope>) override;
 
     int64_t EvalArgs(std::shared_ptr<Number> ptr1, std::shared_ptr<Number> ptr2) override;
+    std::string ToString() override;
 };
 
 class DevideFunction : public IFunctionArithmetic {
 public:
     DevideFunction(){};
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr) override;
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr,
+                                         std::shared_ptr<Scope>) override;
 
     int64_t EvalArgs(std::shared_ptr<Number> ptr1, std::shared_ptr<Number> ptr2) override;
+    std::string ToString() override;
 };
 
 class MaxFunction : public IFunctionArithmetic {
 public:
     MaxFunction(){};
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr) override;
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr,
+                                         std::shared_ptr<Scope>) override;
 
     int64_t EvalArgs(std::shared_ptr<Number> ptr1, std::shared_ptr<Number> ptr2) override;
+    std::string ToString() override;
 };
 
 class MinFunction : public IFunctionArithmetic {
 public:
     MinFunction(){};
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr) override;
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr,
+                                         std::shared_ptr<Scope>) override;
 
     int64_t EvalArgs(std::shared_ptr<Number> ptr1, std::shared_ptr<Number> ptr2) override;
+    std::string ToString() override;
 };
 
 class AbsFunction : public IFunctionArithmetic {
 public:
     AbsFunction(){};
 
-    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr) override;
+    std::shared_ptr<Object> CallInstance(std::shared_ptr<Object> ptr,
+                                         std::shared_ptr<Scope>) override;
 
     int64_t EvalArgs(std::shared_ptr<Number> ptr1, std::shared_ptr<Number> ptr2) override;
+    std::string ToString() override;
 };
